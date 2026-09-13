@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATAR Calculator VCE: Estimate Your Victorian ATAR</title>
+<meta name="description" content="Use an ATAR Calculator VCE to estimate your Victorian Certificate of Education ATAR from predicted study scores, plan your subjects, and research university options.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F3B32;
+    --ink-soft:#3C5A4E;
+    --paper:#F4F0DF;
+    --paper-line:#DED5B8;
+    --card:#FFFFFF;
+    --gold:#B8860B;
+    --gold-soft:#D9A73B;
+    --wine:#7A3B34;
+    --text:#26302B;
+    --text-soft:#5B6660;
+    --radius-sm:6px;
+    --radius-lg:16px;
+    --maxw:1160px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Inter', -apple-system, sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Newsreader', Georgia, serif;
+    color:var(--ink);
+    line-height:1.18;
+    margin:0 0 0.5em 0;
+    font-weight:600;
+  }
+  p{margin:0 0 1.1em 0;}
+  a{color:var(--wine);}
+  img{max-width:100%;display:block;}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+
+  /* ---------- HEADER (single line) ---------- */
+  header.site{
+    width:100%;
+    background:var(--ink);
+    border-bottom:3px solid var(--gold);
+  }
+  header.site .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:66px;
+    gap:20px;
+  }
+  .brand{
+    font-family:'Newsreader', serif;
+    font-weight:700;
+    font-size:1.26rem;
+    color:#fff;
+    letter-spacing:0.2px;
+    white-space:nowrap;
+  }
+  .brand span{color:var(--gold-soft);}
+  nav.primary{
+    display:flex;
+    gap:24px;
+    align-items:center;
+    overflow-x:auto;
+  }
+  nav.primary a{
+    color:#E6E2D3;
+    text-decoration:none;
+    font-size:0.94rem;
+    white-space:nowrap;
+  }
+  nav.primary a:hover{color:var(--gold-soft);}
+  .nav-cta{
+    background:var(--gold);
+    color:#20240C !important;
+    padding:8px 16px;
+    border-radius:var(--radius-sm);
+    font-weight:600;
+  }
+  .nav-cta:hover{background:var(--gold-soft);}
+
+  /* ---------- HERO ---------- */
+  section.hero{
+    background:
+      linear-gradient(180deg, rgba(31,59,50,0.05), rgba(31,59,50,0) 60%);
+    padding:60px 0 52px;
+    border-bottom:1px solid var(--paper-line);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:46px;
+    align-items:center;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--wine);
+    margin-bottom:10px;
+  }
+  .hero h1{
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+    max-width:20ch;
+  }
+  .hero-lede{
+    font-size:1.06rem;
+    color:var(--ink-soft);
+    max-width:56ch;
+  }
+  .hero-lede a{
+    color:var(--wine);
+    font-weight:600;
+    text-decoration-thickness:2px;
+    text-underline-offset:3px;
+  }
+
+  .subject-panel{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:var(--radius-lg);
+    padding:26px 28px;
+    box-shadow:0 18px 40px -22px rgba(31,59,50,0.35);
+  }
+  .subject-panel .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--text-soft);
+  }
+  .subject-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:0.92rem;
+  }
+  .subject-row:last-of-type{border-bottom:none;}
+  .subject-row .score{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--wine);
+    font-weight:600;
+  }
+  .subject-panel .estimate{
+    margin-top:16px;
+    padding-top:16px;
+    border-top:2px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .subject-panel .estimate .num{
+    font-family:'Newsreader', serif;
+    font-size:2.4rem;
+    color:var(--ink);
+    font-weight:700;
+  }
+  .subject-panel .estimate .cap{
+    font-size:0.82rem;
+    color:var(--text-soft);
+  }
+  .subject-panel .footnote{
+    margin-top:14px;
+    font-size:0.82rem;
+    color:var(--text-soft);
+  }
+
+  /* ---------- BODY ---------- */
+  main{background:var(--paper);}
+  .section{
+    padding:50px 0;
+    border-bottom:1px solid var(--paper-line);
+  }
+  .section.alt{background:#EFE9D6;}
+  .section h2{
+    font-size:1.66rem;
+    max-width:24ch;
+  }
+  .section .col{max-width:74ch;}
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    align-items:start;
+  }
+
+  ul.info-list{
+    list-style:none; margin:18px 0; padding:0;
+    display:grid; grid-template-columns:1fr 1fr; gap:10px 24px;
+  }
+  ul.info-list li{
+    padding:10px 0 10px 22px;
+    border-bottom:1px solid var(--paper-line);
+    position:relative;
+    font-size:0.95rem;
+  }
+  ul.info-list li::before{
+    content:"";
+    position:absolute; left:0; top:16px;
+    width:8px; height:8px;
+    background:var(--wine);
+    border-radius:2px;
+  }
+
+  table.compare{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+    background:var(--card);
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+    box-shadow:0 1px 0 var(--paper-line);
+  }
+  table.compare th, table.compare td{
+    padding:13px 16px;
+    text-align:left;
+    border-bottom:1px solid var(--paper-line);
+    font-size:0.93rem;
+  }
+  table.compare thead th{
+    background:var(--ink);
+    color:#fff;
+    font-family:'Newsreader', serif;
+    font-weight:600;
+  }
+  table.compare tbody tr:nth-child(even){background:#F8F5EB;}
+  table.compare td:first-child{color:var(--text-soft); font-weight:500;}
+
+  .callout{
+    background:var(--card);
+    border-left:4px solid var(--gold);
+    border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+    padding:20px 24px;
+    margin:22px 0;
+    font-size:0.97rem;
+    color:var(--ink-soft);
+  }
+  .callout strong{color:var(--ink);}
+  .callout a{font-weight:600;}
+
+  .step-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-top:24px;
+  }
+  .step{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:var(--radius-sm);
+    padding:18px;
+  }
+  .step .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.74rem;
+    color:var(--wine);
+  }
+  .step h3{font-size:1rem; margin:6px 0 6px;}
+  .step p{font-size:0.9rem; color:var(--text-soft); margin:0;}
+
+  .mistake-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+    margin-top:22px;
+  }
+  .mistake{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:var(--radius-sm);
+    padding:20px 22px;
+  }
+  .mistake h3{font-size:1.01rem; color:var(--wine);}
+  .mistake p{font-size:0.92rem; color:var(--text-soft); margin:0;}
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid var(--paper-line);}
+  .faq-item summary{
+    cursor:pointer;
+    padding:18px 4px;
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    font-size:1.01rem;
+    color:var(--ink);
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{
+    content:"+";
+    font-size:1.4rem;
+    color:var(--wine);
+    flex-shrink:0;
+  }
+  .faq-item[open] summary::after{content:"–";}
+  .faq-item p{
+    padding:0 4px 18px 4px;
+    color:var(--text-soft);
+    max-width:70ch;
+  }
+
+  /* Final CTA */
+  section.cta-final{
+    background:var(--ink);
+    color:#EFEBDA;
+    padding:54px 0;
+    text-align:center;
+  }
+  section.cta-final h2{color:#fff; max-width:none;}
+  section.cta-final p{color:#C8D2C9; max-width:56ch; margin-left:auto; margin-right:auto;}
+  .btn-primary{
+    display:inline-block;
+    background:var(--gold);
+    color:#20240C;
+    font-weight:700;
+    padding:13px 26px;
+    border-radius:var(--radius-sm);
+    text-decoration:none;
+    margin-top:14px;
+  }
+  .btn-primary:hover{background:var(--gold-soft);}
+
+  /* ---------- FOOTER ---------- */
+  footer.site{
+    background:#152920;
+    color:#B7C2B9;
+    padding:44px 0 28px;
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr;
+    gap:32px;
+    padding-bottom:28px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+  footer.site h4{
+    color:#fff; font-family:'Newsreader', serif; font-size:1rem; margin:0 0 14px;
+  }
+  footer.site p{font-size:0.9rem; color:#9FAC9F;}
+  footer.site ul{list-style:none; padding:0; margin:0;}
+  footer.site li{margin-bottom:9px;}
+  footer.site a{color:#B7C2B9; text-decoration:none; font-size:0.9rem;}
+  footer.site a:hover{color:var(--gold-soft);}
+  .social-row{display:flex; gap:12px; margin-top:14px;}
+  .social-row a{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:50%;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .social-row a:hover{background:var(--gold); border-color:var(--gold);}
+  .social-row svg{width:16px; height:16px; fill:#E7E9E4;}
+  .social-row a:hover svg{fill:#20240C;}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:20px; font-size:0.82rem; color:#7E8B7F; flex-wrap:wrap; gap:10px;
+  }
+
+  @media (max-width: 900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .two-col{grid-template-columns:1fr;}
+    ul.info-list{grid-template-columns:1fr;}
+    .step-strip{grid-template-columns:1fr 1fr;}
+    .mistake-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    nav.primary{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">VCE<span>ATARCalc</span></div>
+    <nav class="primary">
+      <a href="#how-it-works">How it works</a>
+      <a href="#scaling">Scaling</a>
+      <a href="#mistakes">Common mistakes</a>
+      <a href="#faq">FAQ</a>
+      <a href="#faq" class="nav-cta">Get your estimate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="hero-eyebrow">VICTORIAN CERTIFICATE OF EDUCATION</div>
+        <h1>ATAR Calculator VCE: Estimate Your Victorian ATAR</h1>
+        <p class="hero-lede">
+          For students completing the Victorian Certificate of Education, understanding how final study results may translate into an ATAR is an important part of planning for university. Many Victorian students start by searching what
+          <a href="https://atarcalcu.com">Atar calculator vce kya</a>
+          hai, then use one to estimate their possible Australian Tertiary Admission Rank before the official result is released.
+        </p>
+        <p class="hero-lede">
+          The ATAR isn't simply an average of VCE subject marks — it's a ranking relative to other students, calculated through a specific tertiary admissions process, which is why a dedicated VCE calculator is worth using over a generic one.
+        </p>
+      </div>
+      <div class="subject-panel">
+        <div class="label">SAMPLE STUDY SCORES</div>
+        <div class="subject-row"><span>English</span><span class="score">34</span></div>
+        <div class="subject-row"><span>Mathematical Methods</span><span class="score">31</span></div>
+        <div class="subject-row"><span>Chemistry</span><span class="score">29</span></div>
+        <div class="subject-row"><span>Biology</span><span class="score">33</span></div>
+        <div class="estimate">
+          <div>
+            <div class="num">78–84</div>
+            <div class="cap">estimated ATAR range</div>
+          </div>
+        </div>
+        <div class="footnote">Illustrative only. Your official ATAR is set by the Victorian tertiary admissions process, not by any calculator.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <div class="wrap">
+      <div class="two-col">
+        <div>
+          <h2>What is VCE, and what is a VCE ATAR calculator?</h2>
+          <p>VCE stands for the Victorian Certificate of Education — the senior secondary certificate completed by students in Victoria, providing a structured pathway into university, vocational training, employment, or further study.</p>
+          <p>An ATAR Calculator VCE is an online tool that estimates the possible ATAR of a student completing VCE. Students enter predicted or actual study scores, and the tool produces an estimated ATAR — useful before final results are available, though it should always be treated as an estimate rather than an official figure.</p>
+        </div>
+        <div>
+          <h2>How does a VCE ATAR calculator work?</h2>
+          <p>It generally works by taking the study scores you enter and using them to estimate an aggregate, then an ATAR. The process involves your strongest eligible results and the rules around VCE studies.</p>
+          <p>Study scores can also be scaled as part of the tertiary admissions process, so the relationship between a raw study score and its eventual contribution to the ATAR isn't always straightforward — a calculator handles much of that complexity for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>Study score vs ATAR — what's the difference?</h2>
+      <p class="col">A VCE study score is a numerical measure of performance in a particular VCE study — it is not the same as an ATAR. Students often confuse the two because both matter for admission, but a study score reflects one subject, while the ATAR is an overall tertiary admission ranking. Study scores are also subject to scaling, so a study score should never be read as a direct percentage or a guaranteed number of ATAR points.</p>
+
+      <h2 style="margin-top:34px;">What information do you need?</h2>
+      <p class="col">Different VCE ATAR calculators ask for slightly different information — check whether yours expects current scores, predicted final scores, or another type of result before entering anything.</p>
+      <ul class="info-list">
+        <li>VCE study names</li>
+        <li>Predicted study scores</li>
+        <li>Completed study scores</li>
+        <li>Relevant VCE results</li>
+        <li>Subjects used for tertiary admission</li>
+        <li>Possible future study-score improvements</li>
+      </ul>
+      <p class="col">Use realistic predictions — entering unusually high scores just to see a higher ATAR won't give you information you can actually plan around.</p>
+    </div>
+  </section>
+
+  <section class="section" id="scaling">
+    <div class="wrap">
+      <h2>Understanding VCE scaling</h2>
+      <p class="col">Scaling is one of the most confusing parts of the ATAR process for VCE students. Different VCE studies have different distributions of student performance, and the tertiary admissions process applies scaling so study scores can be compared within the broader ranking methodology.</p>
+      <div class="callout">
+        <strong>Don't chase scaling alone.</strong> A subject that looks attractive because of historical scaling may not be the best choice if you're unlikely to perform strongly in it. Weigh your academic strengths, interests, future prerequisites, and workload before you commit — strong performance in a suitable subject usually beats a scaling advantage you can't actually reach.
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>VCE ATAR calculator vs official ATAR</h2>
+      <p class="col">An online calculator and the official ATAR serve different purposes — one estimates, the other determines admission. This distinction matters because major admission decisions should never rest on an online prediction alone.</p>
+      <table class="compare">
+        <thead>
+          <tr><th>Feature</th><th>VCE ATAR calculator</th><th>Official ATAR</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Main function</td><td>Estimates possible ATAR</td><td>Provides final ranking</td></tr>
+          <tr><td>Input</td><td>Predicted or entered results</td><td>Official academic results</td></tr>
+          <tr><td>Availability</td><td>Usable before final results</td><td>Released after processing</td></tr>
+          <tr><td>Accuracy</td><td>Depends on calculator and data</td><td>Official calculation</td></tr>
+          <tr><td>Purpose</td><td>Planning and goal setting</td><td>Tertiary admission</td></tr>
+          <tr><td>Guaranteed?</td><td>No</td><td>Yes, as the official result</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Using a calculator to set study goals and research courses</h2>
+      <p class="col">Suppose your current predicted study scores produce an estimate below the level you want. Rather than fixating on the number, identify where improvement is realistically possible — review which subjects are currently strongest and which need more attention, then build another prediction around achievable gains.</p>
+      <p class="col">Once you have a range, cross-check it against real course information. Many students
+        <a href="https://atar-chlculator-0a8bd9.gitlab.io/">use this ATAR calculator to compare their estimate</a>
+        against university admission data and prerequisite subjects before finalising preferences.
+      </p>
+      <div class="step-strip">
+        <div class="step">
+          <div class="tag">STEP 01</div>
+          <h3>Honest baseline</h3>
+          <p>Use current performance rather than arbitrary numbers.</p>
+        </div>
+        <div class="step">
+          <div class="tag">STEP 02</div>
+          <h3>Build scenarios</h3>
+          <p>Compare similar, moderate, and ambitious-but-realistic results.</p>
+        </div>
+        <div class="step">
+          <div class="tag">STEP 03</div>
+          <h3>Check prerequisites</h3>
+          <p>Confirm your target courses accept your chosen subjects.</p>
+        </div>
+        <div class="step">
+          <div class="tag">STEP 04</div>
+          <h3>Revisit often</h3>
+          <p>Update predictions as real VCE results come in.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>ATAR isn't the only measure of success.</strong> Creativity, communication, practical skills, persistence, and leadership all matter in education and work. A high ATAR can open doors to competitive courses, but it's worth choosing a pathway that fits your long-term interests, not just the number.
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="mistakes">
+    <div class="wrap">
+      <h2>Common mistakes with VCE ATAR calculators</h2>
+      <div class="mistake-grid">
+        <div class="mistake">
+          <h3>Treating it as an exact forecast</h3>
+          <p>A calculator estimates — it doesn't guarantee your final ATAR.</p>
+        </div>
+        <div class="mistake">
+          <h3>Entering unrealistic scores</h3>
+          <p>Unachievable predicted scores give you a misleading picture to plan around.</p>
+        </div>
+        <div class="mistake">
+          <h3>Assuming scaling guarantees a result</h3>
+          <p>Individual performance matters far more than a subject's reputation for scaling well.</p>
+        </div>
+        <div class="mistake">
+          <h3>Skipping prerequisites</h3>
+          <p>A high estimated ATAR can't compensate for a missing mandatory prerequisite.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="two-col">
+        <div>
+          <h2>If your predicted ATAR is below your goal</h2>
+          <p>It isn't a final outcome. While you're still completing VCE, review assessment feedback, identify difficult topics, tighten your study routine, and ask teachers for support where needed.</p>
+          <p>At the same time, research alternative courses and pathways — there are often several routes to the same broad career destination, and keeping ambitious, realistic, and alternative options together makes planning far less stressful.</p>
+        </div>
+        <div>
+          <h2>Choosing VCE subjects with your future in mind</h2>
+          <p>Subject selection should involve more than maximising an estimated ATAR. Some courses have prerequisite VCE studies — choose without checking, and you could find yourself ineligible for a preferred course regardless of your final ATAR.</p>
+          <p>Research prerequisites first, then use a calculator alongside that information to explore realistic academic scenarios.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="faq">
+    <div class="wrap" style="max-width:800px;">
+      <h2>Frequently asked questions</h2>
+
+      <details class="faq-item" open>
+        <summary>Is a VCE ATAR calculator official?</summary>
+        <p>No. An online calculator provides an estimate. The official ATAR is determined through the relevant tertiary admissions process using official academic results.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What's the difference between a VCE study score and an ATAR?</summary>
+        <p>A study score reflects performance in one VCE study. The ATAR is an overall tertiary admission ranking based on eligible results and the applicable calculation process.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does VCE subject scaling affect the ATAR?</summary>
+        <p>Scaling can form part of the calculation, but choosing a subject purely for its historical scaling doesn't automatically guarantee a higher ATAR.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I use a calculator before finishing VCE?</summary>
+        <p>Yes. Many calculators work with predicted study scores, letting you estimate potential outcomes before final results are released.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why might my predicted ATAR change?</summary>
+        <p>Your prediction can shift if your final study scores differ from your estimates, or if the calculator's assumptions differ from the official admissions methodology.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does ATAR determine my future career?</summary>
+        <p>No. It can influence access to certain courses, but it doesn't determine your intelligence, abilities, or long-term success — many students have multiple pathways into further education and employment.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <div class="wrap">
+      <h2>Plan your VCE journey with a clearer picture</h2>
+      <p>The real value of a calculator isn't the number on screen — it's the earlier planning, realistic study goals, and clearer view of your options that come from using it well.</p>
+      <a class="btn-primary" href="#faq">Explore the FAQ</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>VCE ATAR Calculator</h4>
+        <p>A planning resource for Victorian students estimating their ATAR ahead of official VCE results.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-7.6h2.6l.4-3h-3v-1.9c0-.9.2-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z"/></svg></a>
+          <a href="#" aria-label="X / Twitter"><svg viewBox="0 0 24 24"><path d="M20 5.2c-.6.3-1.3.5-2 .6.7-.4 1.3-1.2 1.5-2-.7.4-1.5.7-2.3.9A3.6 3.6 0 0 0 11 7.6c0 .3 0 .6.1.8-3-.1-5.6-1.6-7.4-3.7-.3.5-.5 1.2-.5 1.8 0 1.2.6 2.3 1.6 2.9-.6 0-1.1-.2-1.6-.4v.1c0 1.7 1.2 3.1 2.8 3.5-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.4 1.7 2.4 3.2 2.4a7.2 7.2 0 0 1-4.5 1.5H2.6A10.2 10.2 0 0 0 8.1 18c6.6 0 10.2-5.4 10.2-10.2v-.5c.7-.5 1.3-1.2 1.7-1.9z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zm0 5.6a2.2 2.2 0 1 1 0-4.4 2.2 2.2 0 0 1 0 4.4zM16.9 4H7.1A3.1 3.1 0 0 0 4 7.1v9.8A3.1 3.1 0 0 0 7.1 20h9.8a3.1 3.1 0 0 0 3.1-3.1V7.1A3.1 3.1 0 0 0 16.9 4zm1.9 12.9c0 1-.9 1.9-1.9 1.9H7.1a1.9 1.9 0 0 1-1.9-1.9V7.1c0-1 .9-1.9 1.9-1.9h9.8c1 0 1.9.9 1.9 1.9v9.8zM17 7.6a.9.9 0 1 1 0-1.8.9.9 0 0 1 0 1.8z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6.9 8.6H4.1V19h2.8V8.6zM5.5 4.2a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2zM19.9 19h-2.8v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V19H10.4V8.6h2.7v1.4h.1c.4-.7 1.4-1.5 2.8-1.5 3 0 3.9 2 3.9 4.6V19z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#scaling">Scaling</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Good to know</h4>
+        <ul>
+          <li><a href="https://atarcalcu.com">Atar calculator vce kya hai</a></li>
+          <li><a href="https://atar-chlculator-0a8bd9.gitlab.io/">Cross-check ATAR calculator</a></li>
+          <li><a href="#faq">Calculator vs official ATAR</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 VCE ATAR Calculator. For planning purposes only — not an official ranking.</span>
+      <span>Made for Victorian VCE students</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
